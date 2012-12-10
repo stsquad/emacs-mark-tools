@@ -73,7 +73,7 @@ With prefix argument ARG, show local buffer mark-ring."
       (mark-list-mode)
       (mark-list--refresh marks)
       (tabulated-list-print))
-    (display-buffer buffer))
+    (switch-to-buffer buffer))
     nil)
 
 (defun mark-list--refresh (&optional marks)
