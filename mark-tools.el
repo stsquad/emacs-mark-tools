@@ -4,8 +4,8 @@
 
 ;; Author: Alex Bennee <alex@bennee.com>
 ;; Maintainer: Alex Bennee <alex@bennee.com>
-;; Version: ?
-;; Homepage: ?
+;; Version: 0.01
+;; Homepage: https://github.com/stsquad/emacs-mark-tools
 
 ;; This file is not part of GNU Emacs.
 
@@ -24,7 +24,10 @@
 
 ;;; Commentary:
 
-;; Some useful utilities for navigating the mark-ring
+;; Emacs maintains a set of mark-rings (global and per-buffer) which
+;; can be used as a simple "where have I been" log. This library
+;; provides a function call list-marks which shows the list of marks
+;; and allows a quick navigation to where you were.
 
 ;;; Code:
 
