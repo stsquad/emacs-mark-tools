@@ -32,8 +32,8 @@
 ;;; Code:
 
 ;; un-comment to debug
-(setq debug-on-error t)
-(setq edebug-all-defs t)
+;(setq debug-on-error t)
+;(setq edebug-all-defs t)
 
 (defvar mark-list-mode-map
   (let ((map (make-sparse-keymap)))
