@@ -52,7 +52,7 @@ Letters do not insert themselves; instead, they are commands.
 \\<mark-list-mode-map>
 \\{mark-list-mode-map}"
   (setq tabulated-list-format [("Buffer" 30 t)
-	                       ("Pos" 6 nil)
+	                       ("Line" 6 nil)
 			       ("Function" 30 t)])
   (setq tabulated-list-use-header-line 't)
   (setq tabulated-list-sort-key (cons "Buffer" nil))
@@ -79,13 +79,21 @@ With prefix argument ARG, show local buffer mark-ring."
     (switch-to-buffer buffer))
     nil)
 
+;; It might be useful to combine the following two functions but handling
+;; multiple return values doesn't seem very LISPy
+
 (defun mark-list--find-defun (buffer position)
-  "For a given MARK find the nearest defun"
+  "For a given BUFFER and POSITION find the nearest defun"
   (save-excursion
     (set-buffer buffer)
-    (goto-char bufpos)
-    (setq funcname (or (ignore-errors (which-function))
-		       "not found"))))
+    (goto-char position)
+    (or (ignore-errors (which-function))
+	"")))
+
+(defun mark-list--find-line (buffer position)
+  "For a given BUFFER and POSITION return the line number"
+  (with-current-buffer buffer
+    (line-number-at-pos position)))
 
 (defun mark-list--refresh (&optional marks)
   (let (entries)
@@ -96,8 +104,9 @@ With prefix argument ARG, show local buffer mark-ring."
 	(let* ((buffer (marker-buffer mark))
 	       (bufname (buffer-name buffer))
 	       (bufpos (marker-position mark))
+	       (bufline (mark-list--find-line buffer bufpos))
 	       (func (mark-list--find-defun buffer bufpos))
-	       (bufstr (format "%d" bufpos)))
+	       (bufstr (format "%d" bufline)))
 	  (push (list mark (vector bufname bufstr func)) entries))))
     (setq tabulated-list-entries (nreverse entries)))
   (tabulated-list-init-header))
