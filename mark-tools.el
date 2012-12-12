@@ -79,18 +79,13 @@ With prefix argument ARG, show local buffer mark-ring."
     (switch-to-buffer buffer))
     nil)
 
-(defun nearest-defun-to-mark (mark)
+(defun mark-list--find-defun (buffer position)
   "For a given MARK find the nearest defun"
-  (let ((funcname "unknown"))
-    (when (markerp mark)
-      (let ((buffer (marker-buffer mark))
-	    (bufpos (marker-position mark)))
-	(save-excursion
-	  (set-buffer buffer)
-	  (goto-char bufpos)
-	  (setq funcname (or (add-log-current-defun)
-			     "not found")))))
-      funcname))
+  (save-excursion
+    (set-buffer buffer)
+    (goto-char bufpos)
+    (setq funcname (or (ignore-errors (which-function))
+		       "not found"))))
 
 (defun mark-list--refresh (&optional marks)
   (let (entries)
@@ -101,7 +96,7 @@ With prefix argument ARG, show local buffer mark-ring."
 	(let* ((buffer (marker-buffer mark))
 	       (bufname (buffer-name buffer))
 	       (bufpos (marker-position mark))
-	       (func (nearest-defun-to-mark mark))
+	       (func (mark-list--find-defun buffer bufpos))
 	       (bufstr (format "%d" bufpos)))
 	  (push (list mark (vector bufname bufstr func)) entries))))
     (setq tabulated-list-entries (nreverse entries)))
