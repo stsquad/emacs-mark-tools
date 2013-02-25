@@ -5,7 +5,7 @@
 ;; Author: Alex Bennee <alex@bennee.com>
 ;; Maintainer: Alex Bennee <alex@bennee.com>
 ;; Version: 0.01
-;; Homepage: https://github.com/stsquad/emacs-mark-tools
+;; URL: https://github.com/stsquad/emacs-mark-tools
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,6 +28,11 @@
 ;; can be used as a simple "where have I been" log. This library
 ;; provides a function call list-marks which shows the list of marks
 ;; and allows a quick navigation to where you were.
+
+;;; Further reading:
+
+;; I've taken some hints from:
+;; http://www.masteringemacs.org/articles/2010/12/22/fixing-mark-commands-transient-mark-mode/
 
 ;;; Code:
 
@@ -128,3 +133,4 @@ With prefix argument ARG, show local buffer mark-ring."
     (switch-to-buffer buffer)))
 
 
+;; mark-tools.el ends here
