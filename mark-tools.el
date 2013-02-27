@@ -64,6 +64,7 @@ Letters do not insert themselves; instead, they are commands.
   (add-hook 'tabulated-list-revert-hook 'mark-list--refresh nil t)
   (tabulated-list-init-header))
 
+;;;###autoload
 (defun list-marks (&optional arg)
   "Display the mark ring.
 The list is displayed in a buffer named \"*Mark List*\".
@@ -116,6 +117,7 @@ With prefix argument ARG, show local buffer mark-ring."
     (setq tabulated-list-entries (nreverse entries)))
   (tabulated-list-init-header))
 
+;;;###autoload
 (defun mark-list-visit-buffer ()
   "Visit the mark in the mark-list buffer"
   (interactive)
@@ -132,5 +134,6 @@ With prefix argument ARG, show local buffer mark-ring."
     (goto-char position)
     (switch-to-buffer buffer)))
 
+(provide 'mark-tools)
 
 ;;; mark-tools.el ends here
