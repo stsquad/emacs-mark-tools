@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2012, Alex Bennée
 
-;; Author: Alex Bennee <alex@bennee.com>
-;; Maintainer: Alex Bennee <alex@bennee.com>
+;; Author: Alex Bennée <alex@bennee.com>
+;; Maintainer: Alex Bennée <alex@bennee.com>
 ;; Version: 0.02
 ;; URL: https://github.com/stsquad/emacs-mark-tools
 
