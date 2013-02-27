@@ -64,6 +64,25 @@ Letters do not insert themselves; instead, they are commands.
   (add-hook 'tabulated-list-revert-hook 'mark-list--refresh nil t)
   (tabulated-list-init-header))
 
+(defun mark-list--make-buffer (mark-list-or-prefix)
+  "Return a buffer named \"*Mark List*\".
+
+If MARK-LIST-OR-PREFIX is a list of marks then it uses that list.
+Otherwise if it is non-nil it uses the current buffer mark-ring.
+Finally if it is nil the buffer is constructed with the
+global-mark-ring."
+  (let ((old-buffer (current-buffer))
+	(buffer (get-buffer-create "*Mark List*"))
+	(marks (cond
+		((eq mark-list-or-prefix 'nil) global-mark-ring)
+		((eq mark-list-or-prefix 't) mark-ring)
+		(mark-list-or-prefix))))
+    (with-current-buffer buffer
+      (mark-list-mode)
+      (mark-list--refresh marks)
+      (tabulated-list-print))
+    buffer))
+
 (defun list-marks (&optional arg)
   "Display the mark ring.
 The list is displayed in a buffer named \"*Mark List*\".
@@ -71,18 +90,17 @@ The list is displayed in a buffer named \"*Mark List*\".
 By default it displays the global-mark-ring.
 With prefix argument ARG, show local buffer mark-ring."
   (interactive "P")
-  (let ((old-buffer (current-buffer))
-	(marks (if arg
-		   mark-ring
-		 global-mark-ring))
-	(buffer (get-buffer-create "*Mark List*")))
+  (switch-to-buffer (mark-list--make-buffer arg)))
 
-    (with-current-buffer buffer
-      (mark-list-mode)
-      (mark-list--refresh marks)
-      (tabulated-list-print))
-    (switch-to-buffer buffer))
-    nil)
+(defun list-marks-other-window (&optional arg)
+  "Display the mark ring in a different window.
+The list is displayed in a buffer named \"*Mark List*\".
+
+By default it displays the global-mark-ring.
+With prefix argument ARG, show local buffer mark-ring."
+  (interactive "P")
+  (switch-to-buffer-other-window (mark-list--make-buffer arg)))
+
 
 ;; It might be useful to combine the following two functions but handling
 ;; multiple return values doesn't seem very LISPy
