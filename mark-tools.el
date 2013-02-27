@@ -49,6 +49,7 @@
   "Local keymap for `mark-list-mode-mode' buffers.")
 
 
+;;;###autoload
 (define-derived-mode mark-list-mode tabulated-list-mode "Mark List"
   "Major mode for listing the historical Mark List.
 The Buffer Menu is invoked by the commands \\[list-marks].
@@ -83,6 +84,7 @@ global-mark-ring."
       (tabulated-list-print))
     buffer))
 
+;;;###autoload
 (defun list-marks (&optional arg)
   "Display the mark ring.
 The list is displayed in a buffer named \"*Mark List*\".
@@ -92,6 +94,7 @@ With prefix argument ARG, show local buffer mark-ring."
   (interactive "P")
   (switch-to-buffer (mark-list--make-buffer arg)))
 
+;;;###autoload
 (defun list-marks-other-window (&optional arg)
   "Display the mark ring in a different window.
 The list is displayed in a buffer named \"*Mark List*\".
