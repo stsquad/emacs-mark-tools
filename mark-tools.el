@@ -153,5 +153,5 @@ With prefix argument ARG, show local buffer mark-ring."
     (goto-char position)
     (switch-to-buffer buffer)))
 
-
+(provide 'mark-tools)
 ;;; mark-tools.el ends here
