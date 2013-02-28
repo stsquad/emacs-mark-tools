@@ -137,6 +137,7 @@ With prefix argument ARG, show local buffer mark-ring."
     (setq tabulated-list-entries (nreverse entries)))
   (tabulated-list-init-header))
 
+;;;####autoload
 (defun mark-list-visit-buffer ()
   "Visit the mark in the mark-list buffer"
   (interactive)
