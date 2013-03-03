@@ -40,6 +40,10 @@
 ;(setq debug-on-error t)
 ;(setq edebug-all-defs t)
 
+;;
+;; Variables
+;;
+
 (defvar mark-list-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map tabulated-list-mode-map)
@@ -48,6 +52,16 @@
     map)
   "Local keymap for `mark-list-mode-mode' buffers.")
 
+(defvar mark-list-current-mark-list nil
+  "A reference to the current mark list.
+This variable is automatically made buffer local for the
+mark-list buffer it is in")
+(make-variable-buffer-local 'mark-list-current-mark-list)
+(put 'mark-list-current-mark-list 'permanent-local t)
+
+;;;
+;;; Mark List mode code
+;;;
 
 ;;;###autoload
 (define-derived-mode mark-list-mode tabulated-list-mode "Mark List"
@@ -73,14 +87,15 @@ Otherwise if it is non-nil it uses the current buffer mark-ring.
 Finally if it is nil the buffer is constructed with the
 global-mark-ring."
   (let ((old-buffer (current-buffer))
-	(buffer (get-buffer-create "*Mark List*"))
-	(marks (cond
-		((eq mark-list-or-prefix 'nil) global-mark-ring)
-		((eq mark-list-or-prefix 't) mark-ring)
-		(mark-list-or-prefix))))
+	(buffer (get-buffer-create "*Mark List*")))
     (with-current-buffer buffer
+      (setq mark-list-current-mark-list
+	    (cond
+	     ((eq mark-list-or-prefix 'nil) 'global-mark-ring)
+	     ((eq mark-list-or-prefix 't) 'mark-ring)
+	     ('mark-list-or-prefix)))
       (mark-list-mode)
-      (mark-list--refresh marks)
+      (mark-list--refresh (symbol-value mark-list-current-mark-list))
       (tabulated-list-print))
     buffer))
 
@@ -136,6 +151,10 @@ With prefix argument ARG, show local buffer mark-ring."
 	  (push (list mark (vector bufname bufstr func)) entries))))
     (setq tabulated-list-entries (nreverse entries)))
   (tabulated-list-init-header))
+
+;;;
+;;; Actions you can call from the buffer
+;;;
 
 ;;;####autoload
 (defun mark-list-visit-buffer ()
