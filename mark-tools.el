@@ -40,6 +40,9 @@
 ;(setq debug-on-error t)
 ;(setq edebug-all-defs t)
 
+;; I use it for the loop macros
+(eval-when-compile (require 'cl))
+
 ;;
 ;; Variables
 ;;
@@ -49,6 +52,7 @@
     (set-keymap-parent map tabulated-list-mode-map)
     (define-key map (kbd "RET") 'mark-list-visit-buffer)
     (define-key map "\C-m" 'mark-list-visit-buffer)
+    (define-key map (kbd "d") 'mark-list-delete-mark)
     map)
   "Local keymap for `mark-list-mode-mode' buffers.")
 
@@ -62,6 +66,12 @@ mark-list buffer it is in")
 ;;;
 ;;; Mark List mode code
 ;;;
+
+(defun marker-listp (marks)
+  "Return 't if MARKS is a list of markers"
+  (if (and (listp marks) (> 0 (length marks)))
+      (not (find-if-not 'markerp marks))
+    'nil))
 
 ;;;###autoload
 (define-derived-mode mark-list-mode tabulated-list-mode "Mark List"
@@ -86,17 +96,19 @@ If MARK-LIST-OR-PREFIX is a list of marks then it uses that list.
 Otherwise if it is non-nil it uses the current buffer mark-ring.
 Finally if it is nil the buffer is constructed with the
 global-mark-ring."
-  (let ((old-buffer (current-buffer))
+  (let ((buffer-ring mark-ring)
 	(buffer (get-buffer-create "*Mark List*")))
     (with-current-buffer buffer
       (setq mark-list-current-mark-list
 	    (cond
-	     ((eq mark-list-or-prefix 'nil) 'global-mark-ring)
-	     ((eq mark-list-or-prefix 't) 'mark-ring)
-	     ('mark-list-or-prefix)))
+	     ((marker-listp mark-list-or-prefix) mark-list-or-prefix)
+	     ((and
+	       mark-list-or-prefix
+	       (eq mark-list-or-prefix current-prefix-arg))
+	      buffer-ring)
+	     ((eq mark-list-or-prefix 'nil) global-mark-ring)))
       (mark-list-mode)
-      (mark-list--refresh (symbol-value mark-list-current-mark-list))
-      (tabulated-list-print))
+      (mark-list--refresh mark-list-current-mark-list))
     buffer))
 
 ;;;###autoload
@@ -150,7 +162,8 @@ With prefix argument ARG, show local buffer mark-ring."
 	       (bufstr (format "%d" bufline)))
 	  (push (list mark (vector bufname bufstr func)) entries))))
     (setq tabulated-list-entries (nreverse entries)))
-  (tabulated-list-init-header))
+  (tabulated-list-init-header)
+  (tabulated-list-print))
 
 ;;;
 ;;; Actions you can call from the buffer
@@ -172,6 +185,13 @@ With prefix argument ARG, show local buffer mark-ring."
 	  (error "Global mark position is outside accessible part of buffer")))
     (goto-char position)
     (switch-to-buffer buffer)))
+
+(defun mark-list-delete-mark ()
+  "Remove all instances of MARK from the mark list and refresh the buffer."
+  (interactive)
+  (let ((mark (tabulated-list-get-id)))
+    (delq mark mark-list-current-mark-list)
+    (mark-list--refresh mark-list-current-mark-list)))
 
 (provide 'mark-tools)
 ;;; mark-tools.el ends here
