@@ -83,7 +83,7 @@ Letters do not insert themselves; instead, they are commands.
 \\{mark-list-mode-map}"
   (setq tabulated-list-format [("Buffer" 30 t)
 	                       ("Line" 6 nil)
-			       ("Function" 30 t)])
+			       ("Function/Text" 30 t)])
   (setq tabulated-list-use-header-line 't)
   (setq tabulated-list-sort-key (cons "Buffer" nil))
   (add-hook 'tabulated-list-revert-hook 'mark-list--refresh nil t)
@@ -141,7 +141,7 @@ With prefix argument ARG, show local buffer mark-ring."
     (set-buffer buffer)
     (goto-char position)
     (or (ignore-errors (which-function))
-	"")))
+	(buffer-substring (point) (line-end-position)))))
 
 (defun mark-list--find-line (buffer position)
   "For a given BUFFER and POSITION return the line number"
